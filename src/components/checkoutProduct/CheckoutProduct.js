@@ -2,7 +2,7 @@ import React, { forwardRef } from "react";
 import useStateValue from "../../contextAPI/StateProvider";
 import "./CheckoutProduct.css";
 const CheckoutProduct = forwardRef(
-  ({ id, image, title, price, rating }, ref) => {
+  ({ id, image, title, price, rating, hiddeButton }, ref) => {
     const [{}, dispatch] = useStateValue();
     return (
       <div ref={ref} className="checkoutProduct">
@@ -20,16 +20,18 @@ const CheckoutProduct = forwardRef(
                 <p>⭐</p>
               ))}
           </div>
-          <button
-            onClick={() => {
-              dispatch({
-                type: "REMOVE_FROM_BASKET",
-                id: id,
-              });
-            }}
-          >
-            Remove from Basket
-          </button>
+          {hiddeButton && (
+            <button
+              onClick={() => {
+                dispatch({
+                  type: "REMOVE_FROM_BASKET",
+                  id: id,
+                });
+              }}
+            >
+              Remove from Basket
+            </button>
+          )}
         </div>
       </div>
     );
