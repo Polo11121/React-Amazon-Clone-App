@@ -8,9 +8,10 @@ import { getBasketTotal } from "../../contextAPI/reducer";
 import useStateValue from "../../contextAPI/StateProvider";
 import CheckoutProduct from "../checkoutProduct/CheckoutProduct";
 import "./Payment.css";
+import db from "../../firebase";
 
 const Payment = () => {
-  const [{ user, basket }] = useStateValue();
+  const [{ user, basket }, dispatch] = useStateValue();
 
   const [succeeded, setSucceeded] = useState(false);
   const [processing, setProcessing] = useState("");
@@ -52,10 +53,22 @@ const Payment = () => {
       .then(({ paymentIntent }) => {
         // paymentIntent = payment confirmation
 
+        db.collection("users")
+          .doc(user?.uid)
+          .collection("orders")
+          .doc(paymentIntent.id)
+          .set({
+            basket: basket,
+            amount: paymentIntent.amount,
+            created: paymentIntent.created,
+          });
+
         setSucceeded(true);
         setError(null);
         setProcessing(false);
-
+        dispatch({
+          type: "EMPTY_BASKET",
+        });
         history.replace("/orders");
       });
   };
